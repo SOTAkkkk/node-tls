@@ -1,7 +1,11 @@
 const https = require('node:https');
+const {program} = require('commander');
+
+program.option('-s, --serverUrl <url>', 'serverUrl for endpoint', 'https://example.com')
+program.parse(process.argv);
 
 // チェックするサーバーのURL
-const serverUrl = process.argv[2] || 'https://example.com';
+const serverUrl = program.opts().serverUrl;
 console.log(serverUrl)
 // HTTPSリクエストを作成
 const req = https.request(serverUrl, (res) => {
@@ -11,10 +15,11 @@ const req = https.request(serverUrl, (res) => {
     const certificate = res.socket.getPeerCertificate();
 
     // 有効期限を取得
-    console.log("証明書の有効期限：" + certificate.valid_to)
-    console.log("認証局かどうか：" + certificate.ca)
-    console.log("証明書発行者：" + certificate.issuer.CN)
-    console.log("subjectaltname：" + certificate.subjectaltname)
+    console.log("証明書の有効期限: " + certificate.valid_to)
+    console.log("認証局かどうか  : " + certificate.ca)
+    console.log("証明書主体者    : " + certificate.subject.CN)
+    console.log("証明書発行者    : " + certificate.issuer.CN)
+    console.log("subjectaltname  : " + certificate.subjectaltname)
 
 });
 
